@@ -1,0 +1,1 @@
+../../upstream/src/d3dx12_property_format_table.cpp

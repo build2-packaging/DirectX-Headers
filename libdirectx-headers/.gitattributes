@@ -1,0 +1,4 @@
+include/directx     symlink=dir
+include/dxguids     symlink=dir
+include/wsl         symlink=dir
+include/composition symlink=dir
