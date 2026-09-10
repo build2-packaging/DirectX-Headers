@@ -1,3 +1,4 @@
 import libs = libdirectx-headers%lib{directx-headers}
 
+./: exe{driver}: include = ($cxx.target.system == 'mingw32')
 exe{driver}: {hxx ixx txx cxx}{**} $libs

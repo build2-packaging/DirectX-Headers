@@ -1,34 +1,19 @@
-#include <sstream>
-#include <stdexcept>
+#ifndef _WIN32
+#  include <wsl/winadapter.h>
+#endif
 
-#include <directx/directx-headers.hpp>
+#ifdef __MINGW32__
+#  include <unknwn.h>
+#endif
+
+#include <directx/d3dx12_property_format_table.h>
 
 #undef NDEBUG
 #include <cassert>
 
 int main ()
 {
-  using namespace std;
-  using namespace directx_headers;
-
-  // Basics.
-  //
-  {
-    ostringstream o;
-    say_hello (o, "World");
-    assert (o.str () == "Hello, World!\n");
-  }
-
-  // Empty name.
-  //
-  try
-  {
-    ostringstream o;
-    say_hello (o, "");
-    assert (false);
-  }
-  catch (const invalid_argument& e)
-  {
-    assert (e.what () == string ("empty name"));
-  }
+  const D3D12_PROPERTY_LAYOUT_FORMAT_TABLE::FORMAT_DETAIL* t =
+    D3D12_PROPERTY_LAYOUT_FORMAT_TABLE::GetFormatTable ();
+  assert (t[0].DXGIFormat == DXGI_FORMAT_UNKNOWN);
 }
