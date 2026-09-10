@@ -1,0 +1,7 @@
+project = libdirectx-guids
+
+using version
+using config
+using test
+using install
+using dist

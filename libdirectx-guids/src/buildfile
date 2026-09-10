@@ -1,0 +1,43 @@
+intf_libs = # Interface dependencies.
+impl_libs = # Implementation dependencies.
+#import xxxx_libs += libhello%lib{hello}
+
+lib{directx-guids}: libul{directx-guids}: {hxx ixx txx cxx}{**} $impl_libs $intf_libs
+
+libs{directx-guids}: def{directx-guids}: include = ($cxx.target.system == 'win32-msvc')
+def{directx-guids}: libul{directx-guids}
+
+# Build options.
+#
+out_pfx = [dir_path] $out_root/src/
+src_pfx = [dir_path] $src_root/src/
+
+cxx.poptions =+ "-I$out_pfx" "-I$src_pfx"
+
+if ($cxx.target.system == 'mingw32')
+  cxx.loptions += -Wl,--export-all-symbols
+
+# Export options.
+#
+lib{directx-guids}:
+{
+  cxx.export.poptions = "-I$out_pfx" "-I$src_pfx"
+  cxx.export.libs = $intf_libs
+}
+
+# For pre-releases use the complete version to make sure they cannot
+# be used in place of another pre-release or the final version. See
+# the version module for details on the version.* variable values.
+#
+if $version.pre_release
+  lib{directx-guids}: bin.lib.version = "-$version.project_id"
+else
+  lib{directx-guids}: bin.lib.version = "-$version.major.$version.minor"
+
+# Install recreating subdirectories.
+#
+{hxx ixx txx}{*}:
+{
+  install         = include/
+  install.subdirs = true
+}
