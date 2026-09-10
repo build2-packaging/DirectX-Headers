@@ -1,10 +1,10 @@
-pub_hdrs = {hxx ixx txx}{**}
+pub_hdrs = {h hxx}{**}
 
-./: $pub_hdrs
+./: $pub_hdrs idl{**}
 
 # Install recreating subdirectories.
 #
-{hxx ixx txx}{*}:
+{h hxx idl}{*}:
 {
   install         = include/
   install.subdirs = true

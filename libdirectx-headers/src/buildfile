@@ -29,8 +29,33 @@ src_pfx_src = [dir_path] $src_root/src/
 cxx.poptions =+ "-I$out_pfx_src" "-I$src_pfx_src" \
                 "-I$out_pfx_inc" "-I$src_pfx_inc"
 
+# The .cpp includes "d3d12.h" without prefix (matches CMake PRIVATE include).
+#
+cxx.poptions =+ "-I$out_pfx_inc/directx" "-I$src_pfx_inc/directx"
+
+# GCC -O3 -DNDEBUG: unknown planar formats hit assert(false) then S_OK without
+# writing totalHeight.
+#
+if ($cxx.id == 'gcc')
+  obj{d3dx12_property_format_table}: cxx.coptions += -Wno-maybe-uninitialized
+
+# Upstream's d3d12.h uses anonymous structs in anonymous unions, a common
+# Windows-header idiom that -pedantic flags as a Clang extension.
+#
+if ($cxx.id.type == 'clang')
+  obj{d3dx12_property_format_table}: cxx.coptions += -Wno-nested-anon-types
+
+if ($cxx.target.class != 'windows')
+  cxx.poptions =+ "-I$out_pfx_inc/wsl/stubs" "-I$src_pfx_inc/wsl/stubs"
+
+# upstream/CMakeLists.txt: MinGW RPC headers define old versions and conflict
+# with D3D headers generated with newer MIDL.
+#
 if ($cxx.target.system == 'mingw32')
+{
+  cxx.poptions += -D__REQUIRED_RPCNDR_H_VERSION__=475
   cxx.loptions += -Wl,--export-all-symbols
+}
 
 # Export options.
 #
@@ -38,6 +63,27 @@ lib{directx-headers}:
 {
   cxx.export.poptions = "-I$out_pfx_inc" "-I$src_pfx_inc"
   cxx.export.libs = $intf_libs
+}
+
+if ($cxx.target.class != 'windows')
+{
+  lib{directx-headers}: \
+    cxx.export.poptions += "-I$out_pfx_inc/wsl/stubs" "-I$src_pfx_inc/wsl/stubs"
+
+  lib{directx-headers}: cxx.pkgconfig.include = include/ include/wsl/stubs/
+}
+
+if ($cxx.target.system == 'mingw32')
+{
+  # Export include/directx so consumers can use <d3d12.h> without the prefix,
+  # matching the unprefixed access MSVC consumers get via the Windows SDK.
+  # cxx.pkgconfig.include is required so the installed .pc keeps this path.
+  #
+  lib{directx-headers}: cxx.export.poptions += \
+    -D__REQUIRED_RPCNDR_H_VERSION__=475 \
+    "-I$out_pfx_inc/directx" "-I$src_pfx_inc/directx"
+
+  lib{directx-headers}: cxx.pkgconfig.include = include/ include/directx/
 }
 
 # For pre-releases use the complete version to make sure they cannot
