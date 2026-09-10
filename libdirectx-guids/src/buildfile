@@ -1,11 +1,9 @@
 intf_libs = # Interface dependencies.
 impl_libs = # Implementation dependencies.
-#import xxxx_libs += libhello%lib{hello}
 
-lib{directx-guids}: libul{directx-guids}: {hxx ixx txx cxx}{**} $impl_libs $intf_libs
+import impl_libs += libdirectx-headers%lib{directx-headers}
 
-libs{directx-guids}: def{directx-guids}: include = ($cxx.target.system == 'win32-msvc')
-def{directx-guids}: libul{directx-guids}
+liba{directx-guids}: {hxx ixx txx cxx}{**} $impl_libs $intf_libs
 
 # Build options.
 #
@@ -14,14 +12,16 @@ src_pfx = [dir_path] $src_root/src/
 
 cxx.poptions =+ "-I$out_pfx" "-I$src_pfx"
 
+# upstream/CMakeLists.txt: MinGW RPC headers define old versions and conflict
+# with D3D headers generated with newer MIDL.
+#
 if ($cxx.target.system == 'mingw32')
-  cxx.loptions += -Wl,--export-all-symbols
+  cxx.poptions += -D__REQUIRED_RPCNDR_H_VERSION__=475
 
 # Export options.
 #
-lib{directx-guids}:
+liba{directx-guids}:
 {
-  cxx.export.poptions = "-I$out_pfx" "-I$src_pfx"
   cxx.export.libs = $intf_libs
 }
 
@@ -30,14 +30,10 @@ lib{directx-guids}:
 # the version module for details on the version.* variable values.
 #
 if $version.pre_release
-  lib{directx-guids}: bin.lib.version = "-$version.project_id"
+  liba{directx-guids}: bin.lib.version = "-$version.project_id"
 else
-  lib{directx-guids}: bin.lib.version = "-$version.major.$version.minor"
+  liba{directx-guids}: bin.lib.version = "-$version.major.$version.minor"
 
-# Install recreating subdirectories.
+# Don't install private headers.
 #
-{hxx ixx txx}{*}:
-{
-  install         = include/
-  install.subdirs = true
-}
+{hxx ixx txx}{*}: install = false

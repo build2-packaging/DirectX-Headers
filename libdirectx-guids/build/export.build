@@ -3,4 +3,6 @@ $out_root/
   include src/
 }
 
+assert ($import.target != libs{directx-guids}) "only the static variant can be imported"
+
 export $out_root/src/$import.target
