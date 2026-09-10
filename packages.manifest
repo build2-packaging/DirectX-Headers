@@ -3,3 +3,6 @@ location: libdirectx-headers/
 
 :
 location: libdirectx-guids/
+
+:
+location: libdirectx-headers-tests/

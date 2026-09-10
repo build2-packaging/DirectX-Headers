@@ -1,0 +1,9 @@
+libs =
+#import libs += libhello%lib{hello}
+
+exe{libdirectx-headers-tests}: {hxx ixx txx cxx}{**} $libs
+
+out_pfx = [dir_path] $out_root/googletest/
+src_pfx = [dir_path] $src_root/googletest/
+
+cxx.poptions =+ "-I$out_pfx" "-I$src_pfx"
