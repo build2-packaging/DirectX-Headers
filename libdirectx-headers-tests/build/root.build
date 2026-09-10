@@ -1,12 +1,35 @@
 # Uncomment to suppress warnings coming from external libraries.
 #
-#cxx.internal.scope = current
+cxx.internal.scope = current
 
 cxx.std = latest
 
 using cxx
 
+# Upstream tests leave unused names and compare unsigned values to int literals.
+#
+if ($cxx.class == 'gcc')
+  cxx.coptions += -Wno-unused-variable -Wno-unused-parameter -Wno-sign-compare
+
+# clang-cl: __analysis_assume expands to while((0,0)) in d3dx12_root_signature.h.
+#
+if ($cxx.id == 'msvc-clang')
+  cxx.coptions += -Wno-unused-value
+
+# Mirror CMake DXHEADERS_BUILD_TEST for running the hardware suite.
+# The executables are still built whenever system d3d12.h is present.
+#
+config [bool] config.libdirectx_headers_tests.hw ?= false
+
 hxx{*}: extension = hpp
 ixx{*}: extension = ipp
 txx{*}: extension = tpp
 cxx{*}: extension = cpp
+
+# Every exe{} in this subproject is by default a test.
+#
+exe{*}: test = true
+
+# The test target for cross-testing (running tests under Wine, etc).
+#
+test.target = $cxx.target

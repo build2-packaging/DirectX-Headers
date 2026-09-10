@@ -1,0 +1,35 @@
+libs =
+import libs += libdirectx-headers%lib{directx-headers} \
+               libdirectx-guids%liba{directx-guids}
+
+# Compile against package headers. Opt the binaries out when the host has no
+# system d3d12.h (Windows SDK or MinGW). WSL typically has the runtime libs
+# but not this header, so these targets stay unbuilt there.
+#
+have_d3d12 = ($cxx.find_system_header('d3d12.h') != [null])
+
+if ($cxx.target.class == 'windows')
+{
+  if ($cxx.target.system == 'mingw32')
+    # test.cpp's check_uuid_linkage() references IID_IUnknown, which MinGW
+    # keeps in libuuid rather than d3d12 or DirectX-Guids.
+    cxx.libs += -ld3d12 -luuid
+  else
+    cxx.libs += d3d12.lib dxcore.lib
+
+  cxx.poptions += -D_UNICODE -DUNICODE -D_WIN32_WINNT=0x0A00
+}
+
+./: exe{directx-headers-test}: include = $have_d3d12
+exe{directx-headers-test}: cxx{test} $libs
+exe{directx-headers-test}: test = $config.libdirectx_headers_tests.hw
+
+# MinGW stub returns S_OK with a null factory, so CreateAdapterList is inlined
+# on a null this pointer.
+#
+if ($cxx.target.system == 'mingw32')
+  cxx.coptions += -Wno-nonnull
+
+./: exe{feature-check-test}: include = $have_d3d12
+exe{feature-check-test}: cxx{feature_check_test} $libs
+exe{feature-check-test}: test = $config.libdirectx_headers_tests.hw

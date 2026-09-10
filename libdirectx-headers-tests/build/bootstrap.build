@@ -2,5 +2,6 @@ project = libdirectx-headers-tests
 
 using version
 using config
+using test
 using install
 using dist

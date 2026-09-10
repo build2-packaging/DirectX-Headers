@@ -1,9 +1,18 @@
 libs =
-#import libs += libhello%lib{hello}
+import libs += libdirectx-headers%lib{directx-headers} \
+               libdirectx-guids%liba{directx-guids} \
+               gtest%liba{gtest_main}
 
-exe{libdirectx-headers-tests}: {hxx ixx txx cxx}{**} $libs
+for t : cxx{*_test}
+{
+  n = $name($t)
+  ./: exe{$n}: {hxx ixx txx}{**} $t $libs testscript
+}
 
 out_pfx = [dir_path] $out_root/googletest/
 src_pfx = [dir_path] $src_root/googletest/
 
 cxx.poptions =+ "-I$out_pfx" "-I$src_pfx"
+
+if ($cxx.target.class == 'windows')
+  cxx.poptions += -D_UNICODE -DUNICODE -D_WIN32_WINNT=0x0A00
