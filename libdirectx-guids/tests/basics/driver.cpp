@@ -1,34 +1,18 @@
-#include <sstream>
-#include <stdexcept>
+#ifndef _WIN32
+#  include <wsl/winadapter.h>
+#endif
 
-#include <directx-guids.hpp>
+#ifdef __MINGW32__
+#  include <unknwn.h>
+#endif
+
+#include <directx/dxcore_interface.h>
 
 #undef NDEBUG
 #include <cassert>
 
 int main ()
 {
-  using namespace std;
-  using namespace directx_guids;
-
-  // Basics.
-  //
-  {
-    ostringstream o;
-    say_hello (o, "World");
-    assert (o.str () == "Hello, World!\n");
-  }
-
-  // Empty name.
-  //
-  try
-  {
-    ostringstream o;
-    say_hello (o, "");
-    assert (false);
-  }
-  catch (const invalid_argument& e)
-  {
-    assert (e.what () == string ("empty name"));
-  }
+  const GUID* g = &DXCORE_ADAPTER_ATTRIBUTE_D3D12_CORE_COMPUTE;
+  assert (g->Data1 == 0x248e2800u);
 }

@@ -1,3 +1,4 @@
-import libs = libdirectx-guids%lib{directx-guids}
+import libs = libdirectx-headers%lib{directx-headers} \
+              libdirectx-guids%liba{directx-guids}
 
-exe{driver}: {hxx ixx txx cxx}{**} $libs testscript{**}
+exe{driver}: {hxx ixx txx cxx}{**} $libs
