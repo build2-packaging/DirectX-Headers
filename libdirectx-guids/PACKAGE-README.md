@@ -1,7 +1,11 @@
-# libdirectx-guids - DirectX Headers
+# libdirectx-guids - DirectX GUID definitions for cross-platform use
 
-This is a `build2` package for the [`<UPSTREAM-NAME>`](https://<UPSTREAM-URL>)
-C++ library. It provides <SUMMARY-OF-FUNCTIONALITY>.
+This is a `build2` package for the
+[`DirectX-Headers`](https://github.com/microsoft/DirectX-Headers)
+C++ library. It provides compiled GUID definitions for D3D12, DXCore, and
+related interfaces via `src/dxguids.cpp` (which defines `INITGUID` before
+including the D3D12 headers). This is the cross-platform alternative to
+linking `dxguid.lib` from the Windows SDK.
 
 
 ## Usage
@@ -10,13 +14,15 @@ To start using `libdirectx-guids` in your project, add the following `depends`
 value to your `manifest`, adjusting the version constraint as appropriate:
 
 ```
-depends: libdirectx-guids ^<VERSION>
+depends: libdirectx-headers ^1.619.5
+depends: libdirectx-guids ^1.619.5
 ```
 
 Then import the library in your `buildfile`:
 
 ```
-import libs = libdirectx-guids%lib{<TARGET>}
+import libs = libdirectx-headers%lib{directx-headers} \
+              libdirectx-guids%liba{directx-guids}
 ```
 
 
@@ -25,18 +31,12 @@ import libs = libdirectx-guids%lib{<TARGET>}
 This package provides the following importable targets:
 
 ```
-lib{<TARGET>}
+liba{directx-guids}
 ```
 
-<DESCRIPTION-OF-IMPORTABLE-TARGETS>
+Note that the library is static-only.
 
 
 ## Configuration variables
 
-This package provides the following configuration variables:
-
-```
-[bool] config.libdirectx_guids.<VARIABLE> ?= false
-```
-
-<DESCRIPTION-OF-CONFIG-VARIABLES>
+This package has no configuration variables.
