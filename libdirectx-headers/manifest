@@ -13,3 +13,4 @@ package-url: https://github.com/build2-packaging/DirectX-Headers
 package-email: packaging@build2.org
 depends: * build2 >= 0.18.0
 depends: * bpkg >= 0.18.0
+tests: libdirectx-headers-tests == $
