@@ -1,0 +1,8 @@
+: 1
+name: libdirectx-headers-tests
+version: 1.619.5
+type: exe
+language: c++
+project: directx-headers
+summary: Direct3D 12 headers and D3DX12 helper library (tests)
+license: MIT

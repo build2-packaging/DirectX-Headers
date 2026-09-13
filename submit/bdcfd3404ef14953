@@ -1,0 +1,7 @@
+: 1
+name: libdirectx-headers
+version: 1.619.5
+language: c++
+project: directx-headers
+summary: Direct3D 12 headers and D3DX12 helper library
+license: MIT
