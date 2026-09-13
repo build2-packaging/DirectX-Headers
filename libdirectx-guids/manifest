@@ -1,6 +1,6 @@
 : 1
 name: libdirectx-guids
-version: 1.619.5-a.0.z
+version: 1.619.5
 language: c++
 project: directx-headers
 summary: DirectX GUID definitions for cross-platform use
